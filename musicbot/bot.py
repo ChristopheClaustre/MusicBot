@@ -1514,6 +1514,7 @@ class MusicBot(discord.Client):
         lines = []
         unlisted = 0
         andmoretext = '* ... and %s more*' % ('x' * len(player.playlist.entries))
+        delete_after = 120
 
         if player.current_entry:
             song_progress = str(timedelta(seconds=player.progress)).lstrip('0').lstrip(':')
@@ -1547,9 +1548,10 @@ class MusicBot(discord.Client):
         if not lines:
             lines.append(
                 'There are no songs queued! Queue something with {}play.'.format(self.config.command_prefix))
+            delete_after = 15
 
         message = '\n'.join(lines)
-        return Response(message, delete_after=30)
+        return Response(message, delete_after=delete_after)
 
     async def cmd_clean(self, message, channel, server, author, search_range=50):
         """
