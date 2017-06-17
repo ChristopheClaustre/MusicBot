@@ -676,7 +676,7 @@ class MusicBot(discord.Client):
         print()
         print("Options:")
 
-        self.safe_print("  Command prefix: " + self.config.command_prefix)
+        self.safe_print("  Command prefix: '" + self.config.command_prefix + "'")
         print("  Default volume: %s%%" % int(self.config.default_volume * 100))
         print("  Skip threshold: %s votes or %s%%" % (
             self.config.skips_required, self._fixg(self.config.skip_ratio_required * 100)))
@@ -1816,7 +1816,7 @@ class MusicBot(discord.Client):
         await self.wait_until_ready()
 
         message_content = message.content.strip()
-        if not message_content.startswith(self.config.command_prefix):
+        if not message_content.lower().startswith(self.config.command_prefix.lower()):
             return
 
         if message.author == self.user:
@@ -1826,8 +1826,8 @@ class MusicBot(discord.Client):
         if self.config.bound_channels and message.channel.id not in self.config.bound_channels and not message.channel.is_private:
             return  # if I want to log this I just move it under the prefix check
 
-        command, *args = message_content.split()  # Uh, doesn't this break prefixes with spaces in them (it doesn't, config parser already breaks them)
-        command = command[len(self.config.command_prefix):].lower().strip()
+        clean_message_content = message_content[len(self.config.command_prefix):].lower().strip()
+        command, *args = clean_message_content.split()
 
         handler = getattr(self, 'cmd_%s' % command, None)
         if not handler:
